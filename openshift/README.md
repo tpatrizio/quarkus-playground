@@ -7,7 +7,7 @@ minishift profile set playground
 minishift config set memory 8GB
 minishift config set cpus 4
 minishift config set vm-driver hyperv
-minishift config set hyperv-virtual-switch "External Network"
+minishift config set hyperv-virtual-switch minishift-external
 minishift config set image-caching true
 minishift addon enable admin-user
 minishift addon enable anyuid

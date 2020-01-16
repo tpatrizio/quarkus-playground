@@ -113,5 +113,9 @@ curl $URL/hello && echo
 If you want to clean up the current deployment deleting all the related resources in terms of Pods, Services, Routes and Deployments, you can execute the following oc command:
 
 ```
-oc delete all -l app=quarkus-playground
+oc delete all --selector app=quarkus-playground
 ```
+
+## Deploy with ODO
+
+odo login api.us-east-2.starter.openshift-online.com:6443 --token=YKNXE1X2UrNdHoNgkRCUZEanZgGs2k_FWE80JNUezQg

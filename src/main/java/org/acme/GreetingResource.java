@@ -17,10 +17,15 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.reactivestreams.Publisher;
 
 import io.vertx.axle.core.Vertx;
+import io.vertx.axle.core.eventbus.EventBus;
+import io.vertx.axle.core.eventbus.Message;
 
 
 @Path("/greeting")
 public class GreetingResource {
+
+    @Inject
+    EventBus bus;
 
     @Inject
     Vertx vertx;
@@ -28,16 +33,10 @@ public class GreetingResource {
     @ConfigProperty(name = "greeting.message") 
     String message;
 
-    @ConfigProperty(name = "greeting.suffix", defaultValue="!") 
-    String suffix;
-
-    @ConfigProperty(name = "greeting.name")
-    Optional<String> name;
-
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("{name}")
-    public CompletionStage<String>  hello(@PathParam("name") String name) {
+    public CompletionStage<String> hello(@PathParam("name") String name) {
         CompletableFuture<String> future = new CompletableFuture<>();
         long start = System.nanoTime();
         vertx.setTimer(10, l -> {
@@ -45,12 +44,19 @@ public class GreetingResource {
             long duration = TimeUnit.MILLISECONDS.convert(System.nanoTime() - start, TimeUnit.NANOSECONDS);
         
             // Format message
-            String message = String.format("Hello %s! (%d ms)%n", name, duration);
+            String greeting = String.format("%s %s! (%d ms)%n", message, name, duration);
         
             // Complete
-            future.complete(message);
+            future.complete(greeting);
         });
         return future;
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("{name}/async")
+    public CompletionStage<String> helloAsync(@PathParam("name") String name) {
+        return bus.<String>request("greeting", name).thenApply(Message::body);
     }
 
     @GET
@@ -58,7 +64,7 @@ public class GreetingResource {
     @Path("{name}/streaming")
     public Publisher<String> greeting(@PathParam("name") String name) {
         return vertx.periodicStream(2000).toPublisherBuilder()
-            .map(l -> String.format("Hello %s! (%s)%n", name, new Date()))
+            .map(l -> String.format("%s %s! (%s)%n", message, name, new Date()))
             .buildRs();
     }
 

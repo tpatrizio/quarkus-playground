@@ -1,0 +1,13 @@
+kind: LocalConfig
+apiversion: odo.openshift.io/v1alpha1
+ComponentSettings:
+  Type: java
+  SourceLocation: target\quarkus-playground-1.0.0-SNAPSHOT-runner.jar
+  SourceType: binary
+  Ports:
+  - 8778/TCP
+  - 8080/TCP
+  - 8443/TCP
+  Application: app
+  Project: intro
+  Name: quarkus-demo

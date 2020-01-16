@@ -3,9 +3,17 @@
 <head>
     <meta charset="utf-8"/>
     <title>SSE with Vert.x - Quarkus</title>
-    <script type="application/javascript" src="streaming.js"></script>
 </head>
 <body>
 <div id="container"></div>
+<script>
+var eventSource = new EventSource("/greeting/Quarkus/streaming");
+eventSource.onmessage = function (event) {
+    var container = document.getElementById("container");
+    var paragraph = document.createElement("p");
+    paragraph.innerHTML = event.data;
+    container.appendChild(paragraph);
+};
+</script>
 </body>
 </html>
